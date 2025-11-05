@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>アンケートフォーム</title>
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <style>
+    /* ===== ベース ===== */
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Noto Sans JP", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+      background: #f7f7f7;
+      margin: 0;
+      padding: 20px 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+    }
+    .container {
+      width: 95%;
+      max-width: 560px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 6px 16px rgba(0,0,0,.08);
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    h1 {
+      background: linear-gradient(135deg, #13ca5e, #0fa958);
+      color: #fff;
+      padding: 20px 16px;
+      border-radius: 0 16px 0 48px;
+      margin: -20px -20px 20px -20px;
+      font-size: 22px;
+      font-weight: 700;
+      line-height: 1.4;
+      box-shadow: inset 0 -6px 12px rgba(0,0,0,.06);
+      text-align: center;
+    }
+    .help {
+      background: #f1fff7;
+      border: 1px solid #bdf0d1;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #1a3a2b;
+      margin-bottom: 16px;
+      line-height: 1.7;
+    }
+
+    /* ===== ラベル & 必須バッジ ===== */
+    .label {
+      display: block;
+      margin: 18px 0 8px;
+      font-weight: 700;
+      font-size: 15px;
+      color: #222;
+    }
+    .badge-required {
+      display: inline-block;
+      margin-left: 8px;
+      padding: 2px 6px;
+      font-size: 11px;
+      color: #fff;
+      background: #ff3b30;
+      border-radius: 4px;
+      vertical-align: 2px;
+    }
+    .badge-optional {
+      display: inline-block;
+      margin-left: 8px;
+      padding: 2px 6px;
+      font-size: 11px;
+      color: #155724;
+      background: #d4edda;
+      border-radius: 4px;
+      vertical-align: 2px;
+    }
+
+    /* ===== 入力 ===== */
+    input[type="text"], input[type="tel"], textarea {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px 12px;
+      border: 1px solid #d8d8d8;
+      border-radius: 8px;
+      font-size: 15px;
+      transition: .2s ease;
+      background: #fff;
+    }
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: #13ca5e;
+      box-shadow: 0 0 0 4px rgba(19,202,94,.12);
+    }
+    textarea { resize: vertical; min-height: 90px; }
+
+    /* ===== ボタン選択群 ===== */
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .btn {
+      flex: 1 1 auto;
+      padding: 10px 12px;
+      border: 1px solid #d8d8d8;
+      border-radius: 10px;
+      background: #fafafa;
+      cursor: pointer;
+      font-size: 14px;
+      white-space: nowrap;
+      transition: .15s ease;
+      text-align: center;
+    }
+    .btn:hover { background: #f0f0f0; }
+    .btn.active {
+      background: #222;
+      color: #fff;
+      border-color: #222;
+      box-shadow: 0 2px 0 rgba(0,0,0,.08) inset;
+    }
+
+    /* ===== セクションの表示切替 ===== */
+    .section { display: none; }
+    .section.active { display: block; }
+
+    /* ===== 送信ボタン ===== */
+    .submit-button {
+      width: 100%;
+      margin-top: 20px;
+      padding: 14px 16px;
+      border: none;
+      border-radius: 10px;
+      background: #13ca5e;
+      color: #fff;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: .15s ease;
+    }
+    .submit-button:hover { filter: brightness(0.95); }
+
+    /* 右端の細いナビ（任意） */
+    .side-nav {
+      position: fixed;
+      right: 0;
+      top: 70%;
+      transform: translateY(-50%);
+      background: #13ca5e;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2px;
+      border-radius: 10px 0 0 10px;
+      z-index: 1000;
+      width: 36px;
+    }
+    .side-nav a {
+      display: flex; align-items: center; justify-content: center;
+      width: 30px; height: 30px; color: #fff; text-decoration: none;
+      font-size: 18px;
+    }
+
+    @media (max-width: 600px) {
+      .container { width: 94%; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>アンケートフォーム</h1>
+    <div class="help">以下の必須項目を入力し、最後に「送信」を押してください。</div>
+
+    <!-- 基本情報 -->
+    <label class="label" for="fullName">お名前（漢字フルネーム）<span class="badge-required">必須</span></label>
+    <input type="text" id="fullName" placeholder="例）山田 花子"/>
+
+    <label class="label" for="furigana">フリガナ<span class="badge-required">必須</span></label>
+    <input type="text" id="furigana" placeholder="例）ヤマダ ハナコ"/>
+
+    <label class="label" for="phone">電話番号<span class="badge-required">必須</span></label>
+    <input type="tel" id="phone" inputmode="tel" placeholder="例）09012345678"/>
+
+    <div class="label">新規 or 再来<span class="badge-required">必須</span></div>
+    <div class="btn-group" id="visitTypeGroup">
+      <button type="button" class="btn" data-value="新規">新規</button>
+      <button type="button" class="btn" data-value="再来">再来</button>
+    </div>
+
+    <div class="label">ネイル or 脱毛<span class="badge-required">必須</span></div>
+    <div class="btn-group" id="serviceTypeGroup">
+      <button type="button" class="btn" data-value="ネイル">ネイル</button>
+      <button type="button" class="btn" data-value="脱毛">脱毛</button>
+    </div>
+
+    <!-- ネイル セクション -->
+    <div id="nailSection" class="section">
+      <div class="label">なりたいイメージ（複数選択可）<span class="badge-required">必須</span></div>
+      <div class="btn-group" id="nailStylesGroup">
+        <button type="button" class="btn" data-value="シンプル">シンプル</button>
+        <button type="button" class="btn" data-value="かわいい">かわいい</button>
+        <button type="button" class="btn" data-value="エレガント">エレガント</button>
+        <button type="button" class="btn" data-value="ニュアンス">ニュアンス</button>
+        <button type="button" class="btn" data-value="個性的">個性的</button>
+        <button type="button" class="btn" data-value="かっこいい">かっこいい</button>
+        <button type="button" class="btn" data-value="その他">その他</button>
+      </div>
+
+      <div class="label">ネイル自体は初めてですか？<span class="badge-required">必須</span></div>
+      <div class="btn-group" id="nailExpGroup">
+        <button type="button" class="btn" data-value="初めて">初めて</button>
+        <button type="button" class="btn" data-value="経験がある">経験がある</button>
+      </div>
+
+      <label class="label" for="nailMemo">担当者に伝えたい事<span class="badge-optional">任意</span></label>
+      <textarea id="nailMemo" placeholder="ご要望や注意してほしい点などがあればご記入ください。"></textarea>
+    </div>
+
+    <!-- 脱毛 セクション -->
+    <div id="hairSection" class="section">
+      <div class="label">やりたい部位（複数選択可）<span class="badge-required">必須</span></div>
+      <div class="btn-group" id="hairPartsGroup">
+        <button type="button" class="btn" data-value="全身">全身</button>
+        <button type="button" class="btn" data-value="VIO">VIO</button>
+        <button type="button" class="btn" data-value="腕">腕</button>
+        <button type="button" class="btn" data-value="脚">脚</button>
+        <button type="button" class="btn" data-value="背中">背中</button>
+        <button type="button" class="btn" data-value="脇">脇</button>
+        <button type="button" class="btn" data-value="うなじ">うなじ</button>
+        <button type="button" class="btn" data-value="顔">顔</button>
+      </div>
+
+      <div class="label">脱毛自体は初めてですか？<span class="badge-required">必須</span></div>
+      <div class="btn-group" id="hairExpGroup">
+        <button type="button" class="btn" data-value="初めて">初めて</button>
+        <button type="button" class="btn" data-value="経験がある">経験がある</button>
+      </div>
+
+      <label class="label" for="hairMemo">担当者に伝えたい事<span class="badge-optional">任意</span></label>
+      <textarea id="hairMemo" placeholder="ご要望や注意してほしい点などがあればご記入ください。"></textarea>
+    </div>
+
+    <button id="submitArea" class="submit-button" onclick="submitForm()">送信</button>
+  </div>
+
+  <!-- LIFF SDK -->
+  <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
+  <script>
+    // ---- 状態管理 ----
+    const state = {
+      visitType: "",
+      serviceType: "",
+      nail: { styles: [], exp: "", memo: "" },
+      hair: { parts: [], exp: "", memo: "" },
+    };
+
+    // ---- LIFF 初期化 ----
+    document.addEventListener("DOMContentLoaded", () => {
+      // ここにあなたのLIFF IDを設定
+      liff.init({ liffId: "2005254357-zKma9BZk" })
+        .then(() => console.log("LIFF初期化成功"))
+        .catch(err => console.error("LIFF初期化失敗", err));
+
+      // クリックイベント委譲（単一選択）
+      setupSingleSelect("visitTypeGroup", val => state.visitType = val);
+      setupSingleSelect("serviceTypeGroup", val => {
+        state.serviceType = val;
+        updateSections();
+      });
+      setupSingleSelect("nailExpGroup", val => state.nail.exp = val);
+      setupSingleSelect("hairExpGroup", val => state.hair.exp = val);
+
+      // クリックイベント委譲（複数選択）
+      setupMultiSelect("nailStylesGroup", arr => state.nail.styles = arr);
+      setupMultiSelect("hairPartsGroup", arr => state.hair.parts = arr);
+    });
+
+    // ---- UI セットアップ関数 ----
+    function setupSingleSelect(groupId, onChange) {
+      const group = document.getElementById(groupId);
+      group.addEventListener("click", e => {
+        const btn = e.target.closest("button.btn");
+        if (!btn) return;
+        group.querySelectorAll(".btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        onChange(btn.dataset.value);
+      });
+    }
+    function setupMultiSelect(groupId, onChange) {
+      const group = document.getElementById(groupId);
+      group.addEventListener("click", e => {
+        const btn = e.target.closest("button.btn");
+        if (!btn) return;
+        btn.classList.toggle("active");
+        const selected = Array.from(group.querySelectorAll(".btn.active")).map(b => b.dataset.value);
+        onChange(selected);
+      });
+    }
+    function updateSections() {
+      const nail = document.getElementById("nailSection");
+      const hair = document.getElementById("hairSection");
+      if (state.serviceType === "ネイル") {
+        nail.classList.add("active");
+        hair.classList.remove("active");
+      } else if (state.serviceType === "脱毛") {
+        hair.classList.add("active");
+        nail.classList.remove("active");
+      } else {
+        nail.classList.remove("active");
+        hair.classList.remove("active");
+      }
+    }
+
+    // ---- バリデーション ----
+    function validate() {
+      const fullName = document.getElementById("fullName").value.trim();
+      const furigana = document.getElementById("furigana").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+
+      if (!fullName) { alert("お名前（フルネーム）を入力してください。"); return false; }
+      if (!furigana) { alert("フリガナを入力してください。"); return false; }
+      if (!phone)    { alert("電話番号を入力してください。"); return false; }
+      if (!state.visitType)  { alert("「新規 or 再来」を選択してください。"); return false; }
+      if (!state.serviceType){ alert("「ネイル or 脱毛」を選択してください。"); return false; }
+
+      if (state.serviceType === "ネイル") {
+        if (!state.nail.styles.length) { alert("ネイルの『なりたいイメージ』を1つ以上選択してください。"); return false; }
+        if (!state.nail.exp) { alert("ネイル経験を選択してください。"); return false; }
+      }
+      if (state.serviceType === "脱毛") {
+        if (!state.hair.parts.length) { alert("脱毛の『やりたい部位』を1つ以上選択してください。"); return false; }
+        if (!state.hair.exp) { alert("脱毛経験を選択してください。"); return false; }
+      }
+      return true;
+    }
+
+    // ---- 送信処理 ----
+    function submitForm() {
+      if (!validate()) return;
+
+      // 任意メモを反映
+      state.nail.memo = document.getElementById("nailMemo").value.trim();
+      state.hair.memo = document.getElementById("hairMemo").value.trim();
+
+      const fullName = document.getElementById("fullName").value.trim();
+      const furigana = document.getElementById("furigana").value.trim();
+      const phone    = document.getElementById("phone").value.trim();
+
+      let detail = "";
+      if (state.serviceType === "ネイル") {
+        detail =
+          `— ネイル —\n` +
+          `【なりたいイメージ】${state.nail.styles.join("、")}\n` +
+          `【ネイル経験】${state.nail.exp}\n` +
+          `【担当者へのメッセージ】${state.nail.memo || "（未記入）"}`;
+      } else if (state.serviceType === "脱毛") {
+        detail =
+          `— 脱毛 —\n` +
+          `【やりたい部位】${state.hair.parts.join("、")}\n` +
+          `【脱毛経験】${state.hair.exp}\n` +
+          `【担当者へのメッセージ】${state.hair.memo || "（未記入）"}`;
+      }
+
+      const text =
+        `≪アンケート≫\n` +
+        `【お名前】${fullName}\n` +
+        `【フリガナ】${furigana}\n` +
+        `【電話番号】${phone}\n` +
+        `【新規/再来】${state.visitType}\n` +
+        `【希望メニュー】${state.serviceType}\n\n` +
+        detail;
+
+      liff.sendMessages([{ type: "text", text }])
+        .then(() => {
+          alert("ご記入ありがとうございます。送信が完了しました。");
+          liff.closeWindow();
+        })
+        .catch(err => {
+          console.error("メッセージ送信に失敗しました", err);
+          alert("送信に失敗しました。通信状況をご確認のうえ、再度お試しください。");
+        });
+    }
+  </script>
+</body>
+</html>
