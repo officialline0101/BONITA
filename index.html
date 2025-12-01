@@ -2,251 +2,376 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>アンケートフォーム</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>カウンセリングシート</title>
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
   <style>
-    /* ===== ベース ===== */
+    /* ===== 設定: カラー＆変数 ===== */
+    :root {
+      --yellow-base: #ecec83;   /* ベースカラー */
+      --pink-accent: #dd5888;   /* アクセントカラー */
+      --text-main: #333333;     /* テキスト色 */
+      --bg-color: #fafafa;      /* 背景色 */
+      --card-bg: #ffffff;       /* カード背景 */
+      --input-bg: #f9f9f9;      /* 入力欄背景 */
+      --border-radius: 12px;    /* 角丸 */
+    }
+
+    /* ===== ベーススタイル ===== */
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Noto Sans JP", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
-      background: #f7f7f7;
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
       margin: 0;
-      padding: 20px 0;
+      padding: 20px;
       display: flex;
       justify-content: center;
-      align-items: flex-start;
       min-height: 100vh;
-    }
-    .container {
-      width: 95%;
-      max-width: 560px;
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 6px 16px rgba(0,0,0,.08);
-      padding: 20px;
       box-sizing: border-box;
     }
+
+    /* メインコンテナ（PC/タブレット用） */
+    .container {
+      width: 100%;
+      max-width: 600px;
+      background: var(--card-bg);
+      border-radius: 16px;
+      box-shadow: 0 4px 25px rgba(0,0,0,0.06);
+      overflow: hidden;
+      padding-bottom: 40px;
+    }
+
+    /* ===== ヘッダー ===== */
+    .header {
+      background: var(--yellow-base);
+      padding: 24px 20px;
+      text-align: center;
+      margin-bottom: 25px;
+    }
     h1 {
-      background: linear-gradient(135deg, #13ca5e, #0fa958);
-      color: #fff;
-      padding: 20px 16px;
-      border-radius: 0 16px 0 48px;
-      margin: -20px -20px 20px -20px;
+      margin: 0;
       font-size: 22px;
+      color: #4a4030;
       font-weight: 700;
       line-height: 1.4;
-      box-shadow: inset 0 -6px 12px rgba(0,0,0,.06);
-      text-align: center;
     }
+    .sub-title {
+      display: block;
+      font-size: 13px;
+      font-weight: normal;
+      margin-top: 6px;
+      color: #6d6350;
+      opacity: 0.85;
+      letter-spacing: 0.05em;
+    }
+
+    .content-area {
+      padding: 0 30px;
+    }
+
+    /* ヘルプボックス */
     .help {
-      background: #f1fff7;
-      border: 1px solid #bdf0d1;
-      padding: 12px;
+      background: #fff;
+      border: 2px solid var(--yellow-base);
+      padding: 12px 16px;
       border-radius: 8px;
       font-size: 14px;
-      color: #1a3a2b;
-      margin-bottom: 16px;
-      line-height: 1.7;
+      line-height: 1.6;
+      margin-bottom: 30px;
+      text-align: center;
+      color: #555;
     }
 
-    /* ===== ラベル & 必須バッジ ===== */
-    .label {
-      display: block;
-      margin: 18px 0 8px;
-      font-weight: 700;
-      font-size: 15px;
-      color: #222;
+    /* ===== フォーム要素 ===== */
+    .label-wrapper {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 24px;
+      margin-bottom: 10px;
     }
+    
+    .label {
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--text-main);
+    }
+
+    /* バッジ */
     .badge-required {
-      display: inline-block;
-      margin-left: 8px;
-      padding: 2px 6px;
+      margin-left: 10px;
+      padding: 4px 10px;
       font-size: 11px;
       color: #fff;
-      background: #ff3b30;
-      border-radius: 4px;
-      vertical-align: 2px;
+      background: var(--pink-accent);
+      border-radius: 20px;
+      font-weight: bold;
+      white-space: nowrap;
     }
     .badge-optional {
-      display: inline-block;
-      margin-left: 8px;
-      padding: 2px 6px;
+      margin-left: 10px;
+      padding: 4px 10px;
       font-size: 11px;
-      color: #155724;
-      background: #d4edda;
-      border-radius: 4px;
-      vertical-align: 2px;
+      color: #555;
+      background: #eee;
+      border-radius: 20px;
+      white-space: nowrap;
     }
 
-    /* ===== 入力 ===== */
+    /* 入力フィールド */
     input[type="text"], input[type="tel"], textarea {
       width: 100%;
       box-sizing: border-box;
-      padding: 12px 12px;
-      border: 1px solid #d8d8d8;
-      border-radius: 8px;
-      font-size: 15px;
-      transition: .2s ease;
-      background: #fff;
+      padding: 14px;
+      border: 2px solid #eaeaea;
+      border-radius: var(--border-radius);
+      font-size: 16px;
+      background: var(--input-bg);
+      color: var(--text-main);
+      transition: 0.2s;
+      appearance: none;
     }
     input:focus, textarea:focus {
       outline: none;
-      border-color: #13ca5e;
-      box-shadow: 0 0 0 4px rgba(19,202,94,.12);
+      border-color: var(--pink-accent);
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(221, 88, 136, 0.1);
     }
-    textarea { resize: vertical; min-height: 90px; }
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+    ::placeholder { color: #ccc; }
 
-    /* ===== ボタン選択群 ===== */
+    /* ===== グリッドボタンレイアウト ===== */
     .btn-group {
-      display: flex;
-      flex-wrap: wrap;
+      display: grid;
       gap: 10px;
-    }
-    .btn {
-      flex: 1 1 auto;
-      padding: 10px 12px;
-      border: 1px solid #d8d8d8;
-      border-radius: 10px;
-      background: #fafafa;
-      cursor: pointer;
-      font-size: 14px;
-      white-space: nowrap;
-      transition: .15s ease;
-      text-align: center;
-    }
-    .btn:hover { background: #f0f0f0; }
-    .btn.active {
-      background: #222;
-      color: #fff;
-      border-color: #222;
-      box-shadow: 0 2px 0 rgba(0,0,0,.08) inset;
+      width: 100%;
     }
 
-    /* ===== セクションの表示切替 ===== */
-    .section { display: none; }
-    .section.active { display: block; }
+    #visitTypeGroup, #serviceTypeGroup {
+      grid-template-columns: 1fr 1fr; 
+    }
+    
+    #nailStylesGroup, #hairPartsGroup {
+      grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px 5px;
+      border: 2px solid #eaeaea;
+      border-radius: 12px;
+      background: #fff;
+      color: #666;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      min-height: 48px;
+    }
+    .btn:hover {
+      background-color: #ffffee;
+    }
+    .btn.active {
+      background: var(--yellow-base);
+      border-color: var(--yellow-base);
+      color: #4a4030;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+      transform: translateY(-2px);
+    }
+
+    /* ===== セクション ===== */
+    .section {
+      display: none;
+      background: #fffcf2;
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 25px;
+      border: 1px dashed #dcdca0;
+    }
+    .section.active {
+      display: block;
+      animation: fadeIn 0.3s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
     /* ===== 送信ボタン ===== */
     .submit-button {
+      display: block;
       width: 100%;
-      margin-top: 20px;
-      padding: 14px 16px;
+      margin-top: 40px;
+      padding: 16px;
       border: none;
-      border-radius: 10px;
-      background: #13ca5e;
+      border-radius: 50px;
+      background: var(--pink-accent);
       color: #fff;
-      font-size: 17px;
+      font-size: 18px;
       font-weight: 700;
       cursor: pointer;
-      transition: .15s ease;
+      box-shadow: 0 6px 20px rgba(221, 88, 136, 0.3);
+      transition: transform 0.1s, background 0.2s;
     }
-    .submit-button:hover { filter: brightness(0.95); }
-
-    /* 右端の細いナビ（任意） */
-    .side-nav {
-      position: fixed;
-      right: 0;
-      top: 70%;
-      transform: translateY(-50%);
-      background: #13ca5e;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 2px;
-      border-radius: 10px 0 0 10px;
-      z-index: 1000;
-      width: 36px;
+    .submit-button:hover {
+      background: #d04d7c;
     }
-    .side-nav a {
-      display: flex; align-items: center; justify-content: center;
-      width: 30px; height: 30px; color: #fff; text-decoration: none;
-      font-size: 18px;
+    .submit-button:active {
+      transform: scale(0.98);
     }
 
-    @media (max-width: 600px) {
-      .container { width: 94%; }
+    /* ===== スマホ専用調整 ===== */
+    @media (max-width: 480px) {
+      body {
+        padding: 10px;
+        background-color: #f2f2f2;
+      }
+      .container {
+        border-radius: 12px;
+        padding-bottom: 30px;
+      }
+      .header {
+        padding: 20px 15px;
+      }
+      h1 { font-size: 20px; }
+      .content-area {
+        padding: 0 16px;
+      }
+      .help {
+        font-size: 13px;
+        padding: 10px;
+      }
+      .label { font-size: 15px; }
+      .btn { font-size: 13px; }
     }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <h1>アンケートフォーム</h1>
-    <div class="help">以下の必須項目を入力し、最後に「送信」を押してください。</div>
-
-    <!-- 基本情報 -->
-    <label class="label" for="fullName">お名前（漢字フルネーム）<span class="badge-required">必須</span></label>
-    <input type="text" id="fullName" placeholder="例）山田 花子"/>
-
-    <label class="label" for="furigana">フリガナ<span class="badge-required">必須</span></label>
-    <input type="text" id="furigana" placeholder="例）ヤマダ ハナコ"/>
-
-    <label class="label" for="phone">電話番号<span class="badge-required">必須</span></label>
-    <input type="tel" id="phone" inputmode="tel" placeholder="例）09012345678"/>
-
-    <div class="label">新規 or 再来<span class="badge-required">必須</span></div>
-    <div class="btn-group" id="visitTypeGroup">
-      <button type="button" class="btn" data-value="新規">新規</button>
-      <button type="button" class="btn" data-value="再来">再来</button>
+    <div class="header">
+      <h1>COUNSELING SHEET<span class="sub-title">BONITA Wax+Flash&Nail</span></h1>
     </div>
-
-    <div class="label">ネイル or 脱毛<span class="badge-required">必須</span></div>
-    <div class="btn-group" id="serviceTypeGroup">
-      <button type="button" class="btn" data-value="ネイル">ネイル</button>
-      <button type="button" class="btn" data-value="脱毛">脱毛</button>
-    </div>
-
-    <!-- ネイル セクション -->
-    <div id="nailSection" class="section">
-      <div class="label">なりたいイメージ（複数選択可）<span class="badge-required">必須</span></div>
-      <div class="btn-group" id="nailStylesGroup">
-        <button type="button" class="btn" data-value="シンプル">シンプル</button>
-        <button type="button" class="btn" data-value="かわいい">かわいい</button>
-        <button type="button" class="btn" data-value="エレガント">エレガント</button>
-        <button type="button" class="btn" data-value="ニュアンス">ニュアンス</button>
-        <button type="button" class="btn" data-value="個性的">個性的</button>
-        <button type="button" class="btn" data-value="かっこいい">かっこいい</button>
-        <button type="button" class="btn" data-value="その他">その他</button>
+    
+    <div class="content-area">
+      <div class="help">
+        <i class="fas fa-info-circle" style="color:#dd5888; margin-right:5px;"></i>
+        以下の必須項目を入力し、<br>最後に「送信」ボタンを押してください。
       </div>
 
-      <div class="label">ネイル自体は初めてですか？<span class="badge-required">必須</span></div>
-      <div class="btn-group" id="nailExpGroup">
-        <button type="button" class="btn" data-value="初めて">初めて</button>
-        <button type="button" class="btn" data-value="経験がある">経験がある</button>
+      <div class="label-wrapper">
+        <label class="label" for="fullName">お名前</label>
+        <span class="badge-required">必須</span>
+      </div>
+      <input type="text" id="fullName" placeholder="例）山田 花子" oninput="saveInput('fullName')"/>
+
+      <div class="label-wrapper">
+        <label class="label" for="furigana">フリガナ</label>
+        <span class="badge-required">必須</span>
+      </div>
+      <input type="text" id="furigana" placeholder="例）ヤマダ ハナコ" oninput="saveInput('furigana')"/>
+
+      <div class="label-wrapper">
+        <label class="label" for="phone">電話番号</label>
+        <span class="badge-required">必須</span>
+      </div>
+      <input type="tel" id="phone" inputmode="tel" placeholder="例）09012345678" oninput="saveInput('phone')"/>
+
+      <div class="label-wrapper">
+        <div class="label">ご来店状況</div>
+        <span class="badge-required">必須</span>
+      </div>
+      <div class="btn-group" id="visitTypeGroup">
+        <button type="button" class="btn" data-value="新規">はじめて（新規）</button>
+        <button type="button" class="btn" data-value="再来">2回目以降（再来）</button>
       </div>
 
-      <label class="label" for="nailMemo">担当者に伝えたい事<span class="badge-optional">任意</span></label>
-      <textarea id="nailMemo" placeholder="ご要望や注意してほしい点などがあればご記入ください。"></textarea>
+      <div class="label-wrapper">
+        <div class="label">ご希望メニュー</div>
+        <span class="badge-required">必須</span>
+      </div>
+      <div class="btn-group" id="serviceTypeGroup">
+        <button type="button" class="btn" data-value="ネイル">ネイル</button>
+        <button type="button" class="btn" data-value="脱毛">脱毛</button>
+      </div>
+
+      <div id="nailSection" class="section">
+        <div class="label-wrapper" style="margin-top:0;">
+          <div class="label">なりたいイメージ</div>
+          <span class="badge-required">必須</span>
+        </div>
+        <p style="font-size:12px; color:#888; margin:0 0 10px;">※複数選択可</p>
+        <div class="btn-group" id="nailStylesGroup">
+          <button type="button" class="btn" data-value="シンプル">シンプル</button>
+          <button type="button" class="btn" data-value="かわいい">かわいい</button>
+          <button type="button" class="btn" data-value="エレガント">エレガント</button>
+          <button type="button" class="btn" data-value="ニュアンス">ニュアンス</button>
+          <button type="button" class="btn" data-value="個性的">個性的</button>
+          <button type="button" class="btn" data-value="かっこいい">かっこいい</button>
+          <button type="button" class="btn" data-value="その他">その他</button>
+        </div>
+
+        <div class="label-wrapper">
+          <div class="label">ネイル経験</div>
+          <span class="badge-required">必須</span>
+        </div>
+        <div class="btn-group" id="nailExpGroup">
+          <button type="button" class="btn" data-value="初めて">初めて</button>
+          <button type="button" class="btn" data-value="経験がある">経験がある</button>
+        </div>
+
+        <div class="label-wrapper">
+          <label class="label" for="nailMemo">担当者に伝えたい事</label>
+          <span class="badge-optional">任意</span>
+        </div>
+        <textarea id="nailMemo" placeholder="ご要望や注意してほしい点などがあればご記入ください。"></textarea>
+      </div>
+
+      <div id="hairSection" class="section">
+        <div class="label-wrapper" style="margin-top:0;">
+          <div class="label">やりたい部位</div>
+          <span class="badge-required">必須</span>
+        </div>
+        <p style="font-size:12px; color:#888; margin:0 0 10px;">※複数選択可</p>
+        <div class="btn-group" id="hairPartsGroup">
+          <button type="button" class="btn" data-value="全身">全身</button>
+          <button type="button" class="btn" data-value="VIO">VIO</button>
+          <button type="button" class="btn" data-value="腕">腕</button>
+          <button type="button" class="btn" data-value="脚">脚</button>
+          <button type="button" class="btn" data-value="背中">背中</button>
+          <button type="button" class="btn" data-value="脇">脇</button>
+          <button type="button" class="btn" data-value="うなじ">うなじ</button>
+          <button type="button" class="btn" data-value="顔">顔</button>
+        </div>
+
+        <div class="label-wrapper">
+          <div class="label">脱毛経験</div>
+          <span class="badge-required">必須</span>
+        </div>
+        <div class="btn-group" id="hairExpGroup">
+          <button type="button" class="btn" data-value="初めて">初めて</button>
+          <button type="button" class="btn" data-value="経験がある">経験がある</button>
+        </div>
+
+        <div class="label-wrapper">
+          <label class="label" for="hairMemo">担当者に伝えたい事</label>
+          <span class="badge-optional">任意</span>
+        </div>
+        <textarea id="hairMemo" placeholder="ご要望や注意してほしい点などがあればご記入ください。"></textarea>
+      </div>
+
+      <button id="submitArea" class="submit-button" onclick="submitForm()">送信する</button>
     </div>
-
-    <!-- 脱毛 セクション -->
-    <div id="hairSection" class="section">
-      <div class="label">やりたい部位（複数選択可）<span class="badge-required">必須</span></div>
-      <div class="btn-group" id="hairPartsGroup">
-        <button type="button" class="btn" data-value="全身">全身</button>
-        <button type="button" class="btn" data-value="VIO">VIO</button>
-        <button type="button" class="btn" data-value="腕">腕</button>
-        <button type="button" class="btn" data-value="脚">脚</button>
-        <button type="button" class="btn" data-value="背中">背中</button>
-        <button type="button" class="btn" data-value="脇">脇</button>
-        <button type="button" class="btn" data-value="うなじ">うなじ</button>
-        <button type="button" class="btn" data-value="顔">顔</button>
-      </div>
-
-      <div class="label">脱毛自体は初めてですか？<span class="badge-required">必須</span></div>
-      <div class="btn-group" id="hairExpGroup">
-        <button type="button" class="btn" data-value="初めて">初めて</button>
-        <button type="button" class="btn" data-value="経験がある">経験がある</button>
-      </div>
-
-      <label class="label" for="hairMemo">担当者に伝えたい事<span class="badge-optional">任意</span></label>
-      <textarea id="hairMemo" placeholder="ご要望や注意してほしい点などがあればご記入ください。"></textarea>
-    </div>
-
-    <button id="submitArea" class="submit-button" onclick="submitForm()">送信</button>
   </div>
 
-  <!-- LIFF SDK -->
   <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
   <script>
     // ---- 状態管理 ----
@@ -257,10 +382,26 @@
       hair: { parts: [], exp: "", memo: "" },
     };
 
-    // ---- LIFF 初期化 ----
+    // ---- 便利な関数: 入力内容をlocalStorageに保存 ----
+    function saveInput(key) {
+      const val = document.getElementById(key).value;
+      localStorage.setItem(key, val);
+    }
+
+    // ---- LIFF 初期化 & 初期復元処理 ----
     document.addEventListener("DOMContentLoaded", () => {
+      
+      // ★ ページ読み込み時に前回の入力内容を復元
+      const savedFullName = localStorage.getItem('fullName');
+      const savedFurigana = localStorage.getItem('furigana');
+      const savedPhone = localStorage.getItem('phone');
+
+      if (savedFullName) document.getElementById('fullName').value = savedFullName;
+      if (savedFurigana) document.getElementById('furigana').value = savedFurigana;
+      if (savedPhone)    document.getElementById('phone').value = savedPhone;
+
       // ここにあなたのLIFF IDを設定
-      liff.init({ liffId: "2005254357-zKma9BZk" })
+      liff.init({ liffId: "2008597319-Xa2p1xe8" })
         .then(() => console.log("LIFF初期化成功"))
         .catch(err => console.error("LIFF初期化失敗", err));
 
@@ -305,9 +446,11 @@
       if (state.serviceType === "ネイル") {
         nail.classList.add("active");
         hair.classList.remove("active");
+        nail.scrollIntoView({ behavior: 'smooth', block: 'start' });
       } else if (state.serviceType === "脱毛") {
         hair.classList.add("active");
         nail.classList.remove("active");
+        hair.scrollIntoView({ behavior: 'smooth', block: 'start' });
       } else {
         nail.classList.remove("active");
         hair.classList.remove("active");
